@@ -39,6 +39,10 @@ return static function (RectorConfig $rectorConfig): void
     ]);
 
     $rectorConfig->skip([
+        # see https://github.com/rectorphp/rector/issues/7699
+        CodeQuality\FuncCall\ArrayKeysAndInArrayToArrayKeyExistsRector ::class => [
+            __DIR__ . '/app/code/core/Mage/Catalog/Model/Resource/Product/Collection.php',
+        ],
         CodeQuality\Array_\CallableThisArrayToAnonymousFunctionRector::class,
         CodeQuality\Assign\CombinedAssignRector::class,
         CodeQuality\BooleanAnd\SimplifyEmptyArrayCheckRector::class,
