@@ -40,7 +40,7 @@ return static function (RectorConfig $rectorConfig): void
 
     $rectorConfig->skip([
         # see https://github.com/rectorphp/rector/issues/7699
-        CodeQuality\FuncCall\ArrayKeysAndInArrayToArrayKeyExistsRector ::class => [
+        CodeQuality\FuncCall\ArrayKeysAndInArrayToArrayKeyExistsRector::class => [
             __DIR__ . '/app/code/core/Mage/Catalog/Model/Resource/Product/Collection.php',
         ],
         CodeQuality\Array_\CallableThisArrayToAnonymousFunctionRector::class,
@@ -69,23 +69,19 @@ return static function (RectorConfig $rectorConfig): void
         CodeQuality\FunctionLike\SimplifyUselessVariableRector::class,
         CodeQuality\Identical\FlipTypeControlToUseExclusiveTypeRector::class,
         CodeQuality\Identical\SimplifyBoolIdenticalTrueRector::class,
-        CodeQuality\If_\CombineIfRector::class,
-        CodeQuality\If_\ConsecutiveNullCompareReturnsToNullCoalesceQueueRector::class,
-        CodeQuality\If_\ExplicitBoolCompareRector::class,
-        CodeQuality\If_\RemoveAlwaysTrueIfConditionRector::class,
-        CodeQuality\If_\ShortenElseIfRector::class,
-        CodeQuality\If_\SimplifyIfElseToTernaryRector::class,
-        CodeQuality\If_\SimplifyIfNullableReturnRector::class,
+        CodeQuality\If_\ExplicitBoolCompareRector::class, #skip
         CodeQuality\Include_\AbsolutizeRequireAndIncludePathRector::class,
         CodeQuality\Isset_\IssetOnPropertyObjectToPropertyExistsRector::class,
         CodeQuality\New_\NewStaticToNewSelfRector::class,
-        CodeQuality\NotEqual\CommonNotEqualRector::class,
         CodeQuality\PropertyFetch\ExplicitMethodCallOverMagicGetSetRector::class,
         CodeQuality\Switch_\SingularSwitchToIfRector::class,
         CodingStyle\ClassMethod\FuncGetArgsToVariadicParamRector::class,
         CodingStyle\FuncCall\CountArrayToEmptyArrayComparisonRector::class,
         DeadCode\Cast\RecastingRemovalRector::class,
+        DeadCode\If_\RemoveAlwaysTrueIfConditionRector::class, #skip
         Php71\FuncCall\RemoveExtraParametersRector::class,
+        Php73\FuncCall\RegexDashEscapeRector::class,
+        Php73\FuncCall\StringifyStrNeedlesRector::class,
         Renaming\FuncCall\RenameFunctionRector::class,
     ]);
 };
