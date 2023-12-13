@@ -235,7 +235,7 @@ return static function (RectorConfig $rectorConfig): void
          * Fixer for PHPStan reports by strict type rule - "PHPStan\Rules\DisallowedConstructs\DisallowedEmptyRule"
          * @see https://github.com/rectorphp/rector/blob/main/docs/rector_rules_overview.md#disallowedemptyrulefixerrector
          */
-        Strict\Empty_\DisallowedEmptyRuleFixerRector::class => true,
+        Strict\Empty_\DisallowedEmptyRuleFixerRector::class => false,
 
         /**
          * Add #[\ReturnTypeWillChange] attribute to configured instanceof class with methods
