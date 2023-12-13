@@ -6,12 +6,16 @@ use Rector\CodeQuality\Rector as CodeQuality;
 use Rector\CodingStyle\Rector as CodingStyle;
 use Rector\Config\RectorConfig;
 use Rector\DeadCode\Rector as DeadCode;
+use Rector\Naming\Rector as Naming;
+use Rector\Php53\Rector as Php53;
+use Rector\Php54\Rector as Php54;
 use Rector\Php71\Rector as Php71;
 use Rector\Php80\Rector as Php80;
 use Rector\Php81\Rector as Php81;
 use Rector\Renaming\Rector as Renaming;
 use Rector\Set\ValueObject\SetList;
 use Rector\Set\ValueObject\LevelSetList;
+use Rector\Strict\Rector as Strict;
 use Rector\Transform\Rector as Transform;
 use Rector\TypeDeclaration\Rector as TypeDeclaration;
 use Rector\Visibility\Rector as Visibility;
@@ -29,15 +33,38 @@ return static function (RectorConfig $rectorConfig): void
 
     $rectorConfig->sets([
         LevelSetList::UP_TO_PHP_81,
-//        SetList::CODE_QUALITY,
-
-//        SetList::CODING_STYLE,
-//        SetList::DEAD_CODE,
+        SetList::DEAD_CODE,
+        SetList::CODING_STYLE,
+        SetList::CODE_QUALITY,
 //        SetList::NAMING,
 //        SetList::TYPE_DECLARATION,
     ]);
 
     $rules = [
+        /**
+         * CUse ?: instead of ?, where useful
+         * @see https://github.com/rectorphp/rector/blob/main/docs/rector_rules_overview.md#ternarytoelvisrector
+         */
+        Php53\Ternary\TernaryToElvisRector::class => true,
+
+        /**
+         * Long array to short array
+         * @see https://github.com/rectorphp/rector/blob/main/docs/rector_rules_overview.md#longarraytoshortarrayrector
+         */
+        Php54\Array_\LongArrayToShortArrayRector::class => true,
+
+        /**
+         * Changes multi catch of same exception to single one | separated.
+         * @see https://github.com/rectorphp/rector/blob/main/docs/rector_rules_overview.md#multiexceptioncatchrector
+         */
+        Php71\TryCatch\MultiExceptionCatchRector::class => true,
+
+        /**
+         * Remove unused variable in catch()
+         * @see https://github.com/rectorphp/rector/blob/main/docs/rector_rules_overview.md#removeunusedvariableincatchrector
+         */
+        Php80\Catch_\RemoveUnusedVariableInCatchRector::class => false,
+
         /**
          * Change mixed docs type to mixed typed
          * @see https://github.com/rectorphp/rector/blob/main/docs/rector_rules_overview.md#mixedtyperector
@@ -64,6 +91,12 @@ return static function (RectorConfig $rectorConfig): void
          * @see https://github.com/rectorphp/rector/blob/main/docs/rector_rules_overview.md#callablethisarraytoanonymousfunctionrector
          */
         CodeQuality\Array_\CallableThisArrayToAnonymousFunctionRector::class => false,
+
+        /**
+         * When throwing into a catch block, checks that the previous exception is passed to the new throw clause
+         * @see https://github.com/rectorphp/rector/blob/main/docs/rector_rules_overview.md#throwwithpreviousexceptionrector
+         */
+        CodeQuality\Catch_\ThrowWithPreviousExceptionRector::class => true,
 
         /**
          * Add missing dynamic properties
@@ -127,10 +160,53 @@ return static function (RectorConfig $rectorConfig): void
         CodeQuality\Ternary\SwitchNegatedTernaryRector::class => true,
 
         /**
+         * Type and name of catch exception should match
+         * @see https://github.com/rectorphp/rector/blob/main/docs/rector_rules_overview.md#catchexceptionnamematchingtyperector
+         */
+        CodingStyle\Catch_\CatchExceptionNameMatchingTypeRector::class => false,
+
+        /**
+         * Convert enscaped {$string} to more readable sprintf or concat, if no mask is used
+         * @see https://github.com/rectorphp/rector/blob/main/docs/rector_rules_overview.md#encapsedstringstosprintfrector
+         * @todo later
+         */
+        CodingStyle\Encapsed\EncapsedStringsToSprintfRector::class => false,
+
+        /**
+         * Wrap encapsed variables in curly braces
+         * @see https://github.com/rectorphp/rector/blob/main/docs/rector_rules_overview.md#wrapencapsedvariableincurlybracesrector
+         */
+        CodingStyle\Encapsed\WrapEncapsedVariableInCurlyBracesRector::class => false,
+
+        /**
+         * Change count array comparison to empty array comparison to improve performance
+         * @see https://github.com/rectorphp/rector/blob/main/docs/rector_rules_overview.md#countarraytoemptyarraycomparisonrector
+         */
+        CodingStyle\FuncCall\CountArrayToEmptyArrayComparisonRector::class => true,
+
+        /**
+         * Add new line after statements to tidify code
+         * @see https://github.com/rectorphp/rector/blob/main/docs/rector_rules_overview.md#newlineafterstatementrector
+         */
+        CodingStyle\Stmt\NewlineAfterStatementRector::class => true,
+
+        /**
+         * Remove if condition that is always true
+         * @see https://github.com/rectorphp/rector/blob/main/docs/rector_rules_overview.md#removealwaystrueifconditionrector
+         */
+        DeadCode\If_\RemoveAlwaysTrueIfConditionRector::class => false,
+
+        /**
          * Remove and true that has no added value
          * @see https://github.com/rectorphp/rector/blob/main/docs/rector_rules_overview.md#removeandtruerector
          */
         DeadCode\BooleanAnd\RemoveAndTrueRector::class => true,
+
+        /**
+         * Remove @param docblock with same type as parameter type
+         * @see https://github.com/rectorphp/rector/blob/main/docs/rector_rules_overview.md#removeuselessparamtagrector
+         */
+        DeadCode\ClassMethod\RemoveUselessParamTagRector::class => false,
 
         /**
          * Remove initialization with null value from property declarations
@@ -147,6 +223,19 @@ return static function (RectorConfig $rectorConfig): void
          * @see https://github.com/rectorphp/rector/blob/main/docs/rector_rules_overview.md#removeparentcallwithoutparentrector
          */
         DeadCode\StaticCall\RemoveParentCallWithoutParentRector::class => false,
+
+        /**
+         * Rename property and method param to match its type
+         * @see https://github.com/rectorphp/rector/blob/main/docs/rector_rules_overview.md#renamepropertytomatchtyperector
+         * @todo enable
+         */
+        Naming\Class_\RenamePropertyToMatchTypeRector::class => false,
+
+        /**
+         * Fixer for PHPStan reports by strict type rule - "PHPStan\Rules\DisallowedConstructs\DisallowedEmptyRule"
+         * @see https://github.com/rectorphp/rector/blob/main/docs/rector_rules_overview.md#disallowedemptyrulefixerrector
+         */
+        Strict\Empty_\DisallowedEmptyRuleFixerRector::class => true,
 
         /**
          * Add #[\ReturnTypeWillChange] attribute to configured instanceof class with methods
@@ -200,7 +289,7 @@ return static function (RectorConfig $rectorConfig): void
          * Add return type from strict return $this
          * @see https://github.com/rectorphp/rector/blob/main/docs/rector_rules_overview.md#returntypefromstrictfluentreturnrector
          */
-        TypeDeclaration\ClassMethod\ReturnTypeFromStrictFluentReturnRector::class => true,
+        TypeDeclaration\ClassMethod\ReturnTypeFromStrictFluentReturnRector::class => false,
 
         /**
          * Add declare(strict_types=1) if missing
@@ -221,11 +310,10 @@ return static function (RectorConfig $rectorConfig): void
     $rectorConfig->rules(array_keys($run));
     $rectorConfig->skip(array_keys($skip));
 
-    $rectorConfig->skip([
-        # see https://github.com/rectorphp/rector/issues/7699
+//    $rectorConfig->skip([
+//        # see https://github.com/rectorphp/rector/issues/7699
 //        CodeQuality\FuncCall\ArrayKeysAndInArrayToArrayKeyExistsRector::class => [
 //            __DIR__ . '/app/code/core/Mage/Catalog/Model/Resource/Product/Collection.php',
 //        ],
-        Rector\Naming\Rector\Class_\RenamePropertyToMatchTypeRector::class,
-    ]);
+//    ]);
 };
