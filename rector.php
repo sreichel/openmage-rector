@@ -12,6 +12,7 @@ use Rector\Php54\Rector as Php54;
 use Rector\Php71\Rector as Php71;
 use Rector\Php80\Rector as Php80;
 use Rector\Php81\Rector as Php81;
+use Rector\Php84\Rector as Php84;
 use Rector\Renaming\Rector as Renaming;
 use Rector\Set\ValueObject\SetList;
 use Rector\Set\ValueObject\LevelSetList;
@@ -84,6 +85,12 @@ return static function (RectorConfig $rectorConfig): void
          * @see https://github.com/rectorphp/rector/blob/main/docs/rector_rules_overview.md#nulltostrictstringfunccallargrector
          */
         Php81\FuncCall\NullToStrictStringFuncCallArgRector::class => true,
+
+        /**
+         * Make implicit nullable param to explicit
+         * @see https://github.com/rectorphp/rector/blob/main/docs/rector_rules_overview.md#explicitnullableparamtyperector
+         */
+        Php84\Param\ExplicitNullableParamTypeRector::class => true,
 
         /**
          * Convert [$this, "method"] to proper anonymous function
